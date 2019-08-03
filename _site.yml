@@ -1,0 +1,11 @@
+name: "Volcanoes on Venus"
+output_dir: "."
+navbar:
+  title: "Volcanoes on Venus"
+  author:
+    - name: "Manoj Mukkamala"
+    
+output:
+  html_document:
+    theme: flatly
+    css: style.css

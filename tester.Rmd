@@ -1,0 +1,63 @@
+---
+title: "Tester"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+
+library(knitr)
+library(reticulate)
+use_python("/Users/Manoj/anaconda3/bin/python3", required = T)
+
+```
+
+---
+
+```{r, fig.align='center', out.width = "800px", out.height = "1500px"}
+
+#knitr::include_graphics('volcano_rgb.jpg', dpi = 600)
+
+```
+
+
+```{python}
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pylab import *
+
+```
+
+```{python, fig.width = 4, fig.height = 4}
+
+plt.figure(figsize=(4, 4))
+x = np.random.randint(0, 1000, (2, 1))
+pd.DataFrame(x).plot.bar()
+
+```
+
+```{python}
+
+dfs = np.random.randint(0, 256, (20, 110*110))
+dfs = pd.DataFrame(dfs)
+```
+
+
+```{python, echo = FALSE, fig.align = "center"}
+
+plt.figure(figsize=(8, 8))
+
+for i in range(0, 16):
+    subplot(4, 4, i+1)
+    plt.imshow(np.array(dfs.iloc[i]).reshape(110, 110))
+    #plt.hist(np.array(dfs.iloc[i]))
+    
+
+
+```
+
+
+
