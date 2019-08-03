@@ -34,12 +34,9 @@ knitr::include_graphics('volcano_image.jpg')
 - __[Data Analysis](dataanalysis.html)__ page explains the analysis I carried out on the input data.
 \
 
-<<<<<<< HEAD
 - __[Git Hub](https://github.com/manojmukkamala/VolcanoesOnVenus)__ page has the code and other documents used for analysis.
 \
 
-=======
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 ---
 
 #### Background 

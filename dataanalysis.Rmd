@@ -10,16 +10,12 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 
 library(knitr)
-<<<<<<< HEAD
-=======
 
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 library(reticulate)
 use_python("/Users/Manoj/anaconda3/bin/python3", required = T)
 
 ```
 
-<<<<<<< HEAD
 ---
 
 Welcome to the __Data Analysis__ section of the project. 
@@ -58,8 +54,6 @@ In this section, I have used the following python libraries:
 
 - Pylab
 
-=======
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 ```{python, echo = FALSE}
 
 import numpy as np
@@ -75,17 +69,16 @@ import plotly.offline as py
 
 # Importing the Dataset
 
-train_images = pd.read_csv("Volcanoes_train/train_images.csv", header = None)
+train_images = pd.read_csv("/Users/Manoj/R/Volcanoes_train/train_images.csv", header = None)
 
-train_labels = pd.read_csv("Volcanoes_train/train_labels.csv")
+train_labels = pd.read_csv("/Users/Manoj/R/Volcanoes_train/train_labels.csv")
 
-test_images = pd.read_csv("Volcanoes_test/test_images.csv", header = None)
+test_images = pd.read_csv("/Users/Manoj/R/Volcanoes_test/test_images.csv", header = None)
 
-test_labels = pd.read_csv("Volcanoes_test/test_labels.csv")
+test_labels = pd.read_csv("/Users/Manoj/R/Volcanoes_test/test_labels.csv")
 
 ```
 
-<<<<<<< HEAD
 ---
 
 ### Preliminary Analysis
@@ -100,27 +93,12 @@ Before performing any data cleansing and data transformations, I deployed a basi
 The accuracy is pretty low and the model is suffering from __high bias__ problem. Therefore, getting more data does not help at this stage. 
 
 We can try:
-=======
-### Preliminary Analysis
-
-Before performing any data cleansing and data transormations, I deployed a basic hand wired logistic regression model on the training dataset to detect the presence of a volcano in the input image and obtained 
-
-- train accuracy: 85.742 %
-
-- test accuracy: 84.12 %
-
-The accuracy is pretty low and the model is suffering from __high bias__ problem. Therefore, getting more data does not help at this stage. We can try:
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 - Data Cleansing
 
 - Try adding new features or polynomial terms
 
-<<<<<<< HEAD
 - Try Neural Networks as they are better for image classification than logistic regression.
-=======
-- Try Neural Networks as they are good at image classification compared to logistic regression.
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 ---
 
@@ -131,11 +109,7 @@ Let us begin with Data Cleansing.
 
 ### Data Exploration
 
-<<<<<<< HEAD
 ---
-
-=======
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 #### Dimensions of Dataset:
 
@@ -146,7 +120,6 @@ print("Testing Data:", test_images.shape)
 
 ```
 
-<<<<<<< HEAD
 ---
 
 #### Sample Input Data:
@@ -159,22 +132,11 @@ print("Testing Data:", test_images.shape)
 
 train_imgs = py$train_images[0:6, 0:15]
 kable(train_imgs[0:6, 0:15])
-=======
-#### Input Data: Images
-
-Input Data Sample:
-
-```{r, echo = FALSE}
-
-train_imgs = py$train_images
-kable(train_imgs[0:5, 0:10])
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 ```
 
 ---
 
-<<<<<<< HEAD
 #### Sample Output Data:
 
 ---
@@ -182,15 +144,6 @@ kable(train_imgs[0:5, 0:10])
 ```{r, echo = FALSE}
 
 train_lbls = py$train_labels[0:5, ]
-=======
-#### Output Data: Labels
-
-Output Data Sample:
-
-```{r, echo = FALSE}
-
-train_lbls = py$train_labels
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 kable(train_lbls[0:5, ])
 
 ```
@@ -199,11 +152,7 @@ kable(train_lbls[0:5, ])
 
 #### Distribution of Target Class in Output
 
-<<<<<<< HEAD
 ```{python, echo = FALSE, fig.align = "center", fig.width = 4, fig.height = 4}
-=======
-```{python, echo = FALSE, fig.align = "center"}
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 train_labels["Volcano?"].value_counts().plot.bar()
 plt.title("Distribution of Target Class in Output")
@@ -216,13 +165,12 @@ plt.xlabel("Class")
 
 #### Creating Dataframes
 
-<<<<<<< HEAD
 Let's combine the train and test data into a single dataframe for easier and effective analysis. We will separate the test data later.
-=======
-Let's combine the train and test data into a single dataframe for easier and effective analysis. We will seperate the test data later.
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
+
+---
 
 ```{python, echo = FALSE}
+
 df1 = train_images.join(train_labels["Volcano?"])
 df1["trn_tst"] = "train"
 
@@ -242,41 +190,27 @@ print("Dimensions of Combined Data Frame:", df.shape)
 
 ```
 
-<<<<<<< HEAD
+---
+
 #### Sample of DataFrame
+
+---
 
 ```{r, echo = FALSE}
 
 rdf <- py$df[0:6, 0:15]
 
 kable(head(rdf[0:6, 0:15]))
-=======
-#### DataFrame
-
-```{r, echo = FALSE}
-
-df <- py$df
-
-kable(head(df[, 0:15]))
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 ```
 
 ---
 
-<<<<<<< HEAD
 ### Corrupted Data
 
 Since the data that we are dealing with is image data, there is a good chance for data corruption and possibly misclassification.
 
 It seems (also mentioned in data dictionary) that few records are corrupted in the input data. Notice the fourth record (index = 3) in the above sample dataframe. The record seems corrupted because it is having a bunch of 0's as the pixel values. 
-=======
-#### Corrupted Data
-
-The data that we are dealing with is image data. So, there is a fair chance for data corruption.
-
-It seems (also mentioned in data dictionary) that few records are corrupted in the input data. Take a look at the fourth record (index = 3) in the above sample dataframe. The record seems corrupted because it is having a bunch of 0's for the pixel values. 
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 Let's plot and see a few records and then we will build a work around to find and filter the corrupted records.
 
@@ -287,7 +221,6 @@ dfs = df.drop(columns = ["Volcano", "trn_tst"])
 ```
 
 ```{python, echo = FALSE, fig.align = "center"}
-<<<<<<< HEAD
 
 plt.figure(figsize=(10, 6), dpi=600)
 
@@ -298,14 +231,6 @@ for i in range(0, 15):
     plt.imshow(np.array(dfs.iloc[i]).reshape(110, 110))
     plt.title("Volcano" if df.iloc[i]["Volcano"] == 1 else "Not Volcano", fontsize = 10)
     
-=======
-plt.figure(figsize = (18, 14))
-
-for i in range(0, 12):
-    subplot(3, 4, i+1)
-    plt.imshow(np.array(dfs.iloc[i]).reshape(110, 110))
-    plt.title("Volcano" if df.iloc[i]["Volcano"] == 1 else "Not Volcano")
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 ```
 
 __Observations__:
@@ -319,7 +244,6 @@ __Observations__:
 Let's look at the pixel value distributions for these images.
 
 ```{python, echo = FALSE, fig.align = "center"}
-<<<<<<< HEAD
 
 plt.figure(figsize=(12, 9))
 
@@ -329,35 +253,18 @@ for i in range(0, 15):
     plt.yticks(fontsize = 6)
     plt.hist(np.array(dfs.iloc[i]))
     plt.title("Volcano" if df.iloc[i]["Volcano"] == 1 else "Not Volcano", fontsize = 10)
-    
-=======
-plt.figure(figsize = (18, 14))
-for i in range(0, 12):
-    subplot(3, 4, i+1)
-    plt.hist(np.array(dfs.iloc[i]))
-    plt.title("Volcano" if df.iloc[i]["Volcano"] == 1 else "Not Volcano")
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
+
 ```
 
 __Observations__:
 
-<<<<<<< HEAD
 - According to the histograms, for the corrupted image (fourth), the number of pixels whose value is 0 are relatively high.
-=======
-- According to the histogram, for the corrupted image, the number of pixels whose value is 0 is relatively high.
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 ---
 
 ### Analyzing Dark Pixels
-<<<<<<< HEAD
-\
 
 First, let's calculate the number of dark pixels (pixel value = 0) per image. Then we will define a threshold to find and filter corrupted records.
-=======
-
-- First, let's calculate the number of dark pixels (pixel value = 0) per image. Then we will define a threshold to find and filter corrupted records.
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 ```{python, echo = FALSE}
 
@@ -365,10 +272,6 @@ df["DarkPxls"] = sum((dfs == 0), axis = 1)
 
 ```
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 ```{python, echo = FALSE}
 
 #Fetch the index of corrupted images. It is useful later.
@@ -381,11 +284,6 @@ crpt_id = df[df["DarkPxls"] != 0].index
 
 #### Statistics and Distribution of Corrupted Pixels
 
-<<<<<<< HEAD
-=======
-__Stats__
-
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 ```{python, echo = FALSE}
 
 for i, j in zip(df["DarkPxls"].loc[crpt_id].describe().index.values, df["DarkPxls"].loc[crpt_id].describe().values):
@@ -397,23 +295,16 @@ for i, j in zip(df["DarkPxls"].loc[crpt_id].describe().index.values, df["DarkPxl
 
 __Quartile Plot__
 
-<<<<<<< HEAD
 ```{python, echo = FALSE, fig.align = "center", fig.width = 4, fig.height = 4}
 
 plt.figure(figsize=(4, 4))
 
-=======
-```{python, echo = FALSE, fig.align = "center"}
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 df["DarkPxls"].loc[crpt_id].quantile([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]).plot.bar()
 
 plt.xlabel("Quantile")
 plt.title("Quantile Plot for Corrupted Pixels")
 plt.show()
-<<<<<<< HEAD
 
-=======
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 ```
 
 __Observations__:
@@ -428,60 +319,40 @@ __Observations__:
 
 #### Corrupted Pixels Distribution 
 
-<<<<<<< HEAD
 ```{python, echo = FALSE, fig.align = "center", fig.width = 4, fig.height = 4}
 
 plt.figure(figsize=(4, 4))
 
-=======
-```{python, echo = FALSE, fig.align = "center"}
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 df["DarkPxls"].loc[crpt_id].plot.hist()
 
 plt.title("Histogram of Corrupted Pixels")
 plt.xlabel("Corrupted Pixels")
 plt.ylabel("Number of Records")
 plt.show()
-<<<<<<< HEAD
 
 ```
 
 __Observations__:
 
 - According to the histogram, most of the corrupted images have lot of corrupted pixels.
-=======
-```
-
-According to the histogram, most of the corrupted images have lot of corrupted pixels.
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 ---
 
 #### Target Classes in Corrupted Images
 
-<<<<<<< HEAD
 ```{python, echo = FALSE, fig.align = "center", fig.width = 4, fig.height = 4}
 
 plt.figure(figsize=(4, 4))
 
-=======
-```{python, echo = FALSE, fig.align = "center"}
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 df.loc[crpt_id]["Volcano"].value_counts().plot.bar()
 
 plt.title("Classes in Corrupted data")
 plt.ylabel("Number of Records")
 plt.xlabel("Class")
-<<<<<<< HEAD
 
 ```
 
-=======
-```
 
----
-
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 __Observations__:
 
 - Lot of corrupted images do not have volcanoes in them.
@@ -500,7 +371,6 @@ vol_crpt_id = df.loc[crpt_id][df.loc[crpt_id]["Volcano"] == 1].index.values
 
 ```{python, echo = FALSE}
 
-<<<<<<< HEAD
 plt.figure(figsize = (8, 8))
 
 j = 1
@@ -510,15 +380,6 @@ for i in vol_crpt_id[0:16]:
     plt.yticks([])
     plt.imshow(np.array(dfs.loc[i]).reshape(110, 110))
     plt.title(str(df["DarkPxls"].loc[i]) + " Missing Pixels", fontsize = 10)
-=======
-plt.figure(figsize = (18, 9))
-
-j = 1
-for i in vol_crpt_id[0:21]:
-    subplot(3, 7, j)
-    plt.imshow(np.array(dfs.loc[i]).reshape(110, 110))
-    plt.title(str(df["DarkPxls"].loc[i]) + " Missing Pixels")
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
     j = j + 1
     
 ```
@@ -527,20 +388,11 @@ for i in vol_crpt_id[0:21]:
 
 #### Imputing
 
-<<<<<<< HEAD
 As we already have a Class Imbalance (very few images with Volcanoes) in the target variable on our original dataset, let's try not to remove the corrupted images that has volcanoes. Instead, let's fill the corrupted pixels in an image with the mean values of the corresponding image. 
 
 But, should we use Row means or Column means?: It seems, for most of the images, the entire column is corrupted. So, let's use row means of image to replace the corrupted pixel.
-=======
-As we already have a Class Imbalance (ver few images with Volcanoes) in the target variable on our original dataset, let's try not to remove the corrupted images that has volcanoes.
 
-Instead, let's fill the corrupted pixels in an image with the mean values of the corresponding image. 
-
-But, should we use Row means or Column means?
-
-It seems, for most of the images, the entire column is corrupted. So, let's use row means of image to replace the corrupted pixel.
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
-
+---
 
 ```{python, echo = FALSE}
 
@@ -557,19 +409,12 @@ for i in range(vol_crpt_imgs.shape[0]):
 
 ```{python, echo = FALSE}
 
-<<<<<<< HEAD
 plt.figure(figsize = (8, 8))
 
 for i in range(vol_crpt_imgs.shape[0]-6):
     subplot(4, 4, i+1)
     plt.xticks([])
     plt.yticks([])
-=======
-plt.figure(figsize = (18, 15))
-
-for i in range(vol_crpt_imgs.shape[0]-2):
-    subplot(4, 5, i+1)
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
     plt.imshow(vol_crpt_imgs[i])
     
 ```
@@ -593,7 +438,6 @@ dfs.drop(index = 9734, inplace = True)
 
 ---
 
-<<<<<<< HEAD
 #### Imputing Corrupted Pixels with Pixel Means from all images
 
 ```{python, echo = FALSE}
@@ -604,16 +448,6 @@ for i in vol_crpt_id[0:16]:
     subplot(4, 4, j)
     plt.xticks([])
     plt.yticks([])
-=======
-#### Imputing Corrupted Pixels with Row Means
-
-```{python, echo = FALSE}
-plt.figure(figsize = (18, 15))
-
-j = 1
-for i in vol_crpt_id[0:20]:
-    subplot(4, 5, j)
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
     plt.imshow(np.array(dfs.loc[i]).reshape(110, 110))
     j = j + 1
 ```
@@ -635,7 +469,6 @@ novol_crpt_id = df.loc[crpt_id][df.loc[crpt_id]["Volcano"] == 0].index.values
 Let's plot a few records whose corrupted pixels are within 0.1 Quantile
 
 ```{python, echo = FALSE}
-<<<<<<< HEAD
 
 plt.figure(figsize = (8, 8))
 
@@ -648,26 +481,13 @@ for i in novol_crpt_id[0:16]:
     plt.title(str(df["DarkPxls"].loc[i]) + " Missing Pixels", fontsize = 10)
     j = j + 1
     
-=======
-plt.figure(figsize = (18, 15))
-j = 1
-for i in novol_crpt_id[0:20]:
-    subplot(4, 5, j)
-    plt.imshow(np.array(dfs.loc[i]).reshape(110, 110))
-    plt.title(str(df["DarkPxls"].loc[i]) + " Missing Pixels")
-    j = j + 1
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 ```
 
 ---
 
 As our dataset already have a good number of examples without volcanoes, I think it would not be good idea to invest time to define threshold level for missing pixels or to impute data for corrupted pixels.
 
-<<<<<<< HEAD
 Let's omit the corrupted records from the dataset.
-=======
-Let's omite the corrupted records.
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 
 ---
 
@@ -697,10 +517,4 @@ print("Shape of New Data Frame:", dfs.shape)
 
 ```
 
-<<<<<<< HEAD
-=======
-```{python, echo = FALSE}
-```
-
->>>>>>> 09eb7b698437a60a8425721e5b1ced29b1f4168c
 - Corrupted Records Omitted!
