@@ -1,0 +1,550 @@
+---
+title: " Venus Volcanoes Data Analysis"
+output: 
+    html_document:
+        code_folding: hide
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(reticulate)
+use_python("/Library/Frameworks/Python.framework/Versions/3.7/bin/python3", required = T)
+
+```
+
+---
+
+Welcome to the __Data Analysis__ section of the project. 
+\
+
+---
+
+```{r, fig.align='center', out.width = "800px", out.height = "460px"}
+
+knitr::include_graphics('volcano_rgb.jpg', dpi = 600)
+ 
+```
+
+---
+
+In this section, we spend most of the time on 
+
+- Data Cleansing 
+
+- Data Exploration 
+
+- Data Preparation
+
+
+These are the crucial steps for any machine learning project as hygiene data yields robust models.  
+
+---
+
+In this section, I have used the following python libraries:
+
+- Numpy
+
+- Pandas
+
+- Matplotlib
+
+- Pylab
+
+---
+
+```{python, echo = FALSE}
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pylab import *
+import pickle
+
+```
+
+```{python}
+
+train_images = pd.read_csv("Volcanoes_train/train_images.csv", header = None)
+
+train_labels = pd.read_csv("Volcanoes_train/train_labels.csv")
+
+test_images = pd.read_csv("Volcanoes_test/test_images.csv", header = None)
+
+test_labels = pd.read_csv("Volcanoes_test/test_labels.csv")
+
+```
+
+### Data Exploration
+
+---
+
+#### Dimensions of Dataset:
+
+---
+
+```{python}
+
+print("Training Data:", train_images.shape)
+print("Testing Data:", test_images.shape)
+
+```
+
+```{python}
+
+train_labels = train_labels[['Volcano?']].rename(columns = {'Volcano?': 'Volcano'})
+test_labels = test_labels[['Volcano?']].rename(columns = {'Volcano?': 'Volcano'})
+
+```
+
+```{python}
+
+#train_labels['Volcano'].value_counts()
+
+```
+
+```{python}
+
+#test_labels['Volcano'].value_counts()
+
+```
+---
+
+#### Sample of DataFrame
+
+---
+```{python}
+
+df = train_images.join(train_labels)
+df.head()
+
+```
+
+---
+
+### Corrupted Images
+
+- The data that we are dealing with is image data. So, there is a good chance for data corruption.
+
+- It seems (also mentioned in data dictionary) that few records are corrupted. Take a look at the fourth record (index = 3) in the above sample dataframe. The record seems corrupted because it is having a bunch of 0's for the pixel values. 
+
+Let's plot and see a few records and then we will build a work around to find and filter the corrupted records.
+
+```{python, echo = FALSE, fig.align = "center"}
+
+dfs = df.drop(columns = ["Volcano"])
+
+plt.figure(figsize=(10, 6), dpi=600)
+for i in range(0, 15):
+    subplot(3, 5, i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(np.array(dfs.iloc[i]).reshape(110, 110))
+    plt.title("Volcano" if df.iloc[i]["Volcano"] == 1 else "Not Volcano", fontsize = 10)
+    
+```
+
+
+__Observations__:
+
+- The fourth record has some data corrupted at the top of the image.
+
+---
+
+#### Pixel Values Distribution
+
+Let's look at the pixel value distributions for these images.
+
+```{python, echo = FALSE, fig.align = "center"}
+
+plt.figure(figsize=(12, 9), dpi=600)
+for i in range(0, 15):
+    subplot(3, 5, i+1)
+    plt.xticks(fontsize = 6)
+    plt.yticks(fontsize = 6)
+    plt.hist(np.array(dfs.iloc[i]))
+    plt.title("Volcano" if df.iloc[i]["Volcano"] == 1 else "Not Volcano", fontsize = 10)
+    
+```
+
+__Observations__:
+
+- According to the histograms, for the corrupted image (fourth), the number of pixels whose value is 0 are relatively high.
+
+---
+
+### Analyzing Corrupted Pixels
+
+- First, let's calculate the number of Corrupted pixels (pixel value = 0) per image. 
+
+- Then we will define a threshold to find and filter corrupted records.
+
+```{python, echo = FALSE}
+
+df["DarkPxls"] = sum((dfs == 0), axis = 1)
+
+crpt_id = df[df["DarkPxls"] != 0].index
+
+```
+
+Let's look at some of the corrupted images
+
+```{python, echo = FALSE, fig.align = "center"}
+
+plt.figure(figsize=(12, 9), dpi=600)
+
+for i in range(0, 15):
+    subplot(3, 5, i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(np.array(dfs.loc[crpt_id].iloc[i]).reshape(110, 110))
+    plt.title("Volcano" if df.loc[crpt_id].iloc[i]["Volcano"] == 1 else "Not Volcano")
+    
+```
+
+---
+
+#### Statistics and Distribution of Corrupted Pixels
+
+```{python, echo = FALSE}
+
+for i, j in zip(df["DarkPxls"].loc[crpt_id].describe().index.values[1:], df["DarkPxls"].loc[crpt_id].describe().values[1:]):
+    print(str(i).upper() + " of Corrupted Pixels " + str(round(j)), "\n")
+    
+```
+
+---
+
+__Quartile Plot__
+
+```{python, echo = FALSE, fig.align = "center", fig.width = 4, fig.height = 4}
+
+plt.figure(figsize=(4, 4))
+
+df["DarkPxls"].loc[crpt_id].quantile([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]).plot.bar()
+
+plt.xlabel("Quantile")
+plt.title("Quantile Plot for Corrupted Pixels")
+plt.show()
+```
+
+__Observations__:
+
+- Almost 50% of the corrupted images have all the pixels corrupted.
+
+- 25% of the corrupted images have around 4000 pixels corrupted.
+
+- 10% of the corrupted images have around 2000 pixels corrupted.
+
+---
+
+#### Corrupted Pixels Distribution 
+
+```{python, echo = FALSE, fig.align = "center", fig.width = 4, fig.height = 4}
+
+plt.figure(figsize=(4, 4))
+
+df["DarkPxls"].loc[crpt_id].plot.hist()
+
+plt.title("Histogram of Corrupted Pixels")
+plt.xlabel("Corrupted Pixels")
+plt.ylabel("Number of Records")
+plt.show()
+
+```
+
+__Observations__:
+
+- According to the histogram, most of the corrupted images have lot of corrupted pixels.
+
+---
+
+Let's pick an example from each bin and see how the image looks
+
+```{python, echo = FALSE, fig.align = "center"}
+
+plt.figure(figsize=(12, 10), dpi=600)
+
+for i in range(0, 12):
+    subplot(3, 4, i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(np.array(df[(df['DarkPxls'] > 2000*(i/2)) & (df['DarkPxls'] <= 2000*(i+1)/2)].drop(['DarkPxls', 'Volcano'], axis = 1).iloc[0]).reshape(110, 110))
+    plt.title('{0} to {1} \n missing pixels'.format(2000*(i//2), 2000*(i+1)//2))
+
+```
+
+---
+
+#### Target Classes in Corrupted Images
+
+```{python, echo = FALSE, fig.align = "center", fig.width = 4, fig.height = 4}
+
+plt.figure(figsize=(4, 4))
+df.loc[crpt_id]["Volcano"].value_counts().plot.bar()
+plt.title("Classes in Corrupted data")
+plt.ylabel("Number of Records")
+plt.xlabel("Class")
+
+```
+
+---
+
+__Observations__:
+
+- Lot of corrupted images do not have volcanoes in them.
+
+- Only a few corrupted records do have volcanoes.
+
+---
+
+### Omitting Corrupted Images without Volcanoes
+
+- As our dataset already have a good number of examples without volcanoes, I think it would not be good idea to invest time to define threshold level for missing pixels or to impute data for corrupted pixels that __have Volcanoes__ and omit the records that are corrupted and do not have volcanoes.
+
+```{python, echo = FALSE}
+
+# Let's omit the corrupted records.
+
+df = df[~((df['Volcano'] == 0) & (df['DarkPxls'] > 0))]
+
+```
+
+---
+
+### Corrupted Images with Volcanoes
+
+```{python, echo = FALSE}
+
+vol_crpt_id = df[((df['Volcano'] == 1) & (df['DarkPxls'] > 0))].index.values
+
+#df.loc[vol_crpt_id].head()
+
+```
+
+```{python, echo = FALSE, fig.align = "center"}
+
+plt.figure(figsize = (19, 10), dpi = 600)
+
+j = 1
+for i in vol_crpt_id[0:18]:
+    subplot(3, 6, j)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(np.array(dfs.loc[i]).reshape(110, 110))
+    plt.title(str(df["DarkPxls"].loc[i]) + " Missing Pixels")
+    j = j + 1
+    
+```
+
+---
+
+### Imputing
+
+- As we already have a Class Imbalance (very few images with Volcanoes) in the target variable on our original dataset, let's try not to remove the corrupted images that has volcanoes. Instead, let's fill the corrupted pixels in the image with the mean values of the image. 
+
+- But, should we use Row means or Column means?: It seems, for most of the images, the entire column is corrupted. So, let's use row means of image to replace the corrupted pixel.
+
+```{python, echo = FALSE}
+
+dfs = np.array(df.drop(['Volcano', 'DarkPxls'], axis = 1).loc[vol_crpt_id]).reshape(-1, 110, 110)
+
+for i in range(dfs.shape[0]):
+    dfs[i] = np.array(pd.DataFrame(dfs[i]).T.replace(0, pd.DataFrame(dfs[i]).mean(axis = 1).apply(int)).T)
+    
+```
+---
+
+#### Imputing Corrupted Pixels with Row Means
+
+```{python, echo = FALSE}
+
+plt.figure(figsize = (18, 9))
+
+for i in range(dfs.shape[0]):
+    subplot(3, 6, i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(dfs[i])
+    
+```
+
+- The images doesn't look good. Row means doesn't seem like a great idea. 
+
+- Instead let's compute the mean of every pixel for all the images that are not corrupted and use those means to replace the corrupted pixels in corrupted images.
+
+---
+
+#### Imputing Corrupted Pixels with Pixel Means from all images
+
+```{python, echo = FALSE}
+
+mean_row = pd.Series(df[df["DarkPxls"] == 0].drop(['Volcano', 'DarkPxls'], axis = 1).mean().apply(int)).T
+
+dfs = df.drop(['Volcano', 'DarkPxls'], axis = 1).loc[vol_crpt_id].replace(0, mean_row)
+
+```
+
+```{python, echo = FALSE}
+
+plt.figure(figsize = (18, 9))
+
+j = 1
+for i in vol_crpt_id[0:18]:
+    subplot(3, 6, j)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(np.array(dfs.loc[i]).reshape(110, 110))
+    j = j + 1
+    
+```
+
+
+- Definitely not a wonderful improvement, but much better than using row means.
+
+- Now, in this final attempt, let's try to replace the missing/corrupted pixels by flipping the image (mirroring) and use the corresponding pixels from flipped image.
+
+---
+
+#### Imputing Corrupted Pixels with Pixels from flipped Image
+
+```{python, echo = FALSE}
+
+for i in vol_crpt_id:
+    zero_index = df.loc[i][df.loc[i] == 0].index
+    flipped = pd.Series(np.flip(np.array(df.loc[i][:-2]).reshape(110, 110), axis = 1).ravel())[zero_index]
+    df.loc[i][list(zero_index)] = flipped
+    
+```
+
+```{python}
+plt.figure(figsize = (18, 9))
+
+j = 1
+for i in vol_crpt_id[0:18]:
+    subplot(3, 6, j)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(np.array(df.loc[i][:-2]).reshape(110, 110))
+    j = j + 1
+```
+
+
+- Awesome, this looks much better than the above two methods. Let's stick with this!
+
+---
+
+```{python}
+df = df.reset_index().drop(['index', 'DarkPxls'], axis = 1)
+```
+
+### Data Preparation
+
+---
+
+#### Creating Train, Validation and Test sets
+
+```{python}
+
+from sklearn.model_selection import train_test_split
+
+X_train = df.drop("Volcano", axis = 1)
+y_train = df["Volcano"]
+
+X_val, X_test, y_val, y_test = train_test_split(test_images, test_labels, test_size = 0.2)
+
+print("Training Samples:", X_train.shape[0])
+print("Validation Samples:", X_val.shape[0])
+print("Test Samples:", X_test.shape[0])
+
+```
+
+---
+
+#### Target Classes
+
+```{python}
+
+fig, axs = plt.subplots(1, 3, figsize = (12, 6))
+
+#subplot(1, 3, 1)
+y_train.value_counts().plot.bar(ax = axs[0])
+#plt.title("Training Dataset")
+axs[0].set_title("Training Dataset")
+
+#subplot(1, 3, 2)
+y_val['Volcano'].value_counts().plot.bar(ax = axs[1])
+#plt.title("Validation Dataset")
+axs[1].set_title("Validation Dataset")
+
+#subplot(1, 3, 3)
+y_test['Volcano'].value_counts().plot.bar(ax = axs[2])
+#plt.title("Test Dataset")
+axs[2].set_title("Test Dataset")
+```
+
+---
+
+#### Normalize
+
+It is a good practice to normalize data before feeding it to the learning algorithm. Algorithms like gradient decent will converge faster if we normalize/standardize the input data.
+
+```{python}
+X_train = X_train / 255.0
+X_val = X_val / 255.0
+X_test = X_test / 255.0
+```
+
+---
+
+#### Sanity Checks
+
+```{python}
+print("Number of Input Examples:", X_train.shape[0])
+print("Number of Input Features:", X_train.shape[1], '\n')
+print("X_train shape:", X_train.shape)
+print("y_train shape:", y_train.shape)
+print("X_val shape:", X_val.shape)
+print("y_val shape:", y_val.shape)
+print("X_test shape:", X_test.shape)
+print("y_test shape:", y_test.shape)
+```
+
+```{python}
+plt.figure(figsize = (14, 12))
+
+for i in range(0, 12):
+    subplot(3, 4, i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(np.array(X_train.iloc[i]).reshape(110, 110))
+    plt.title("Volcano" if y_train[i] == 1 else "Not Volcano")
+```
+
+---
+
+#### Saving the Dataset
+
+```{python}
+
+X_train = np.array(X_train)
+y_train = np.array(y_train)
+
+X_val = np.array(X_val)
+y_val = np.array(y_val)
+
+X_test = np.array(X_test)
+y_test = np.array(y_test)
+
+volcanoes_dataset = ((X_train, y_train), (X_val, y_val), (X_test, y_test))
+
+```
+
+```{python}
+
+# pickle_out = open("volcanoes_dataset.pickle", "wb")
+# pickle.dump(volcanoes_dataset, pickle_out)
+# pickle_out.close()
+
+```

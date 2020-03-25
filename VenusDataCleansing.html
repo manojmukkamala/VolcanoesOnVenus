@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Venus Volcanoes Data Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Volcanoes on Venus</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Venus Volcanoes Data Analysis</h1>
+
+</div>
+
+
+<hr />
+<p>Welcome to the <strong>Data Analysis</strong> section of the project.<br />
+</p>
+<hr />
+<p><img src="volcano_rgb.jpg" width="800px" height="460px" style="display: block; margin: auto;" /></p>
+<hr />
+<p>In this section, we spend most of the time on</p>
+<ul>
+<li><p>Data Cleansing</p></li>
+<li><p>Data Exploration</p></li>
+<li><p>Data Preparation</p></li>
+</ul>
+<p>These are the crucial steps for any machine learning project as hygiene data yields robust models.</p>
+<hr />
+<p>In this section, I have used the following python libraries:</p>
+<ul>
+<li><p>Numpy</p></li>
+<li><p>Pandas</p></li>
+<li><p>Matplotlib</p></li>
+<li><p>Pylab</p></li>
+</ul>
+<hr />
+<div id="data-exploration" class="section level3">
+<h3>Data Exploration</h3>
+<hr />
+<div id="dimensions-of-dataset" class="section level4">
+<h4>Dimensions of Dataset:</h4>
+<hr />
+<pre><code>## Training Data: (7000, 12100)</code></pre>
+<pre><code>## Testing Data: (2734, 12100)</code></pre>
+<hr />
+</div>
+<div id="sample-of-dataframe" class="section level4">
+<h4>Sample of DataFrame</h4>
+<hr />
+<pre><code>##      0    1    2    3   4    5  ...  12095  12096  12097  12098  12099  Volcano
+## 0   95  101   99  103  95   86  ...     99    117    116    118     96        1
+## 1   91   92   91   89  92   93  ...    105    104    100     90     81        0
+## 2   87   70   72   74  84   78  ...     80     91     80     84     90        0
+## 3    0    0    0    0   0    0  ...     90     92     80     88     96        0
+## 4  114  118  124  119  95  118  ...    104    106    117    111    115        0
+## 
+## [5 rows x 12101 columns]</code></pre>
+<hr />
+</div>
+</div>
+<div id="corrupted-images" class="section level3">
+<h3>Corrupted Images</h3>
+<ul>
+<li><p>The data that we are dealing with is image data. So, there is a good chance for data corruption.</p></li>
+<li><p>It seems (also mentioned in data dictionary) that few records are corrupted. Take a look at the fourth record (index = 3) in the above sample dataframe. The record seems corrupted because it is having a bunch of 0’s for the pixel values.</p></li>
+</ul>
+<p>Let’s plot and see a few records and then we will build a work around to find and filter the corrupted records.</p>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-9-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><strong>Observations</strong>:</p>
+<ul>
+<li>The fourth record has some data corrupted at the top of the image.</li>
+</ul>
+<hr />
+<div id="pixel-values-distribution" class="section level4">
+<h4>Pixel Values Distribution</h4>
+<p>Let’s look at the pixel value distributions for these images.</p>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-10-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><strong>Observations</strong>:</p>
+<ul>
+<li>According to the histograms, for the corrupted image (fourth), the number of pixels whose value is 0 are relatively high.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="analyzing-corrupted-pixels" class="section level3">
+<h3>Analyzing Corrupted Pixels</h3>
+<ul>
+<li><p>First, let’s calculate the number of Corrupted pixels (pixel value = 0) per image.</p></li>
+<li><p>Then we will define a threshold to find and filter corrupted records.</p></li>
+</ul>
+<p>Let’s look at some of the corrupted images</p>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-12-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<hr />
+<div id="statistics-and-distribution-of-corrupted-pixels" class="section level4">
+<h4>Statistics and Distribution of Corrupted Pixels</h4>
+<pre><code>## MEAN of Corrupted Pixels 8190.0 
+## 
+## STD of Corrupted Pixels 4500.0 
+## 
+## MIN of Corrupted Pixels 1.0 
+## 
+## 25% of Corrupted Pixels 4020.0 
+## 
+## 50% of Corrupted Pixels 11198.0 
+## 
+## 75% of Corrupted Pixels 12100.0 
+## 
+## MAX of Corrupted Pixels 12100.0</code></pre>
+<hr />
+<p><strong>Quartile Plot</strong></p>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><strong>Observations</strong>:</p>
+<ul>
+<li><p>Almost 50% of the corrupted images have all the pixels corrupted.</p></li>
+<li><p>25% of the corrupted images have around 4000 pixels corrupted.</p></li>
+<li><p>10% of the corrupted images have around 2000 pixels corrupted.</p></li>
+</ul>
+<hr />
+</div>
+<div id="corrupted-pixels-distribution" class="section level4">
+<h4>Corrupted Pixels Distribution</h4>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-15-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><strong>Observations</strong>:</p>
+<ul>
+<li>According to the histogram, most of the corrupted images have lot of corrupted pixels.</li>
+</ul>
+<hr />
+<p>Let’s pick an example from each bin and see how the image looks</p>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-16-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<hr />
+</div>
+<div id="target-classes-in-corrupted-images" class="section level4">
+<h4>Target Classes in Corrupted Images</h4>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;" /></p>
+<hr />
+<p><strong>Observations</strong>:</p>
+<ul>
+<li><p>Lot of corrupted images do not have volcanoes in them.</p></li>
+<li><p>Only a few corrupted records do have volcanoes.</p></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="omitting-corrupted-images-without-volcanoes" class="section level3">
+<h3>Omitting Corrupted Images without Volcanoes</h3>
+<ul>
+<li>As our dataset already have a good number of examples without volcanoes, I think it would not be good idea to invest time to define threshold level for missing pixels or to impute data for corrupted pixels that <strong>have Volcanoes</strong> and omit the records that are corrupted and do not have volcanoes.</li>
+</ul>
+<hr />
+</div>
+<div id="corrupted-images-with-volcanoes" class="section level3">
+<h3>Corrupted Images with Volcanoes</h3>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-20-1.png" width="1824" style="display: block; margin: auto;" /></p>
+<hr />
+</div>
+<div id="imputing" class="section level3">
+<h3>Imputing</h3>
+<ul>
+<li><p>As we already have a Class Imbalance (very few images with Volcanoes) in the target variable on our original dataset, let’s try not to remove the corrupted images that has volcanoes. Instead, let’s fill the corrupted pixels in the image with the mean values of the image.</p></li>
+<li><p>But, should we use Row means or Column means?: It seems, for most of the images, the entire column is corrupted. So, let’s use row means of image to replace the corrupted pixel.</p></li>
+</ul>
+<hr />
+<div id="imputing-corrupted-pixels-with-row-means" class="section level4">
+<h4>Imputing Corrupted Pixels with Row Means</h4>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-22-1.png" width="1728" /></p>
+<ul>
+<li><p>The images doesn’t look good. Row means doesn’t seem like a great idea.</p></li>
+<li><p>Instead let’s compute the mean of every pixel for all the images that are not corrupted and use those means to replace the corrupted pixels in corrupted images.</p></li>
+</ul>
+<hr />
+</div>
+<div id="imputing-corrupted-pixels-with-pixel-means-from-all-images" class="section level4">
+<h4>Imputing Corrupted Pixels with Pixel Means from all images</h4>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-24-1.png" width="1728" /></p>
+<ul>
+<li><p>Definitely not a wonderful improvement, but much better than using row means.</p></li>
+<li><p>Now, in this final attempt, let’s try to replace the missing/corrupted pixels by flipping the image (mirroring) and use the corresponding pixels from flipped image.</p></li>
+</ul>
+<hr />
+</div>
+<div id="imputing-corrupted-pixels-with-pixels-from-flipped-image" class="section level4">
+<h4>Imputing Corrupted Pixels with Pixels from flipped Image</h4>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-26-1.png" width="1728" /></p>
+<ul>
+<li>Awesome, this looks much better than the above two methods. Let’s stick with this!</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="data-preparation" class="section level3">
+<h3>Data Preparation</h3>
+<hr />
+<div id="creating-train-validation-and-test-sets" class="section level4">
+<h4>Creating Train, Validation and Test sets</h4>
+<pre><code>## Training Samples: 6747</code></pre>
+<pre><code>## Validation Samples: 2187</code></pre>
+<pre><code>## Test Samples: 547</code></pre>
+<hr />
+</div>
+<div id="target-classes" class="section level4">
+<h4>Target Classes</h4>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-29-1.png" width="1152" /></p>
+<hr />
+</div>
+<div id="normalize" class="section level4">
+<h4>Normalize</h4>
+<p>It is a good practice to normalize data before feeding it to the learning algorithm. Algorithms like gradient decent will converge faster if we normalize/standardize the input data.</p>
+<hr />
+</div>
+<div id="sanity-checks" class="section level4">
+<h4>Sanity Checks</h4>
+<pre><code>## Number of Input Examples: 6747</code></pre>
+<pre><code>## Number of Input Features: 12100</code></pre>
+<pre><code>## X_train shape: (6747, 12100)</code></pre>
+<pre><code>## y_train shape: (6747,)</code></pre>
+<pre><code>## X_val shape: (2187, 12100)</code></pre>
+<pre><code>## y_val shape: (2187, 1)</code></pre>
+<pre><code>## X_test shape: (547, 12100)</code></pre>
+<pre><code>## y_test shape: (547, 1)</code></pre>
+<p><img src="VenusDataCleansing_files/figure-html/unnamed-chunk-32-1.png" width="1344" /></p>
+<hr />
+</div>
+<div id="saving-the-dataset" class="section level4">
+<h4>Saving the Dataset</h4>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
