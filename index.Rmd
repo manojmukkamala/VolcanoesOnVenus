@@ -31,7 +31,7 @@ knitr::include_graphics('volcano_image.jpg')
 - In this project, I have analyzed the images of Volcanoes on Venus captured by NASA's Magellan spacecraft in 1990.
 \
 
-- __[Data Analysis](dataanalysis.html)__ page explains the analysis I carried out on the input data.
+- __[Data Preparation](VenusDataCleansing.html)__ page explains the analysis and data cleansing I carried out on the input data.
 \
 
 - __[Git Hub](https://github.com/manojmukkamala/VolcanoesOnVenus)__ page has the code and other documents used for analysis.
@@ -49,6 +49,39 @@ knitr::include_graphics('volcano_image.jpg')
 
 - In the analysis of the data captured by the spacecraft they found volcanoes on the surface on Venus, volcanoes that can be used to make a automatic machine that can detect them.
 \
+
+---
+
+#### Report
+
+The goal of this project is to experiment with and study the different types of neural network architechtures, from simple hand coded models to complex CNN's using Tensorflow/Keras, in the process of identifying Volcanoes from a given surface image of Venus.
+
+Here are some fun facts about Venus:
+
+- Venus does not have any Moons and so is single.
+
+- Venus orbits the Sun every 224.7 Earth days while the rotation period is 243 Earth days. So, you are year old even before you are one day old on Venus.
+
+
+__Models__
+
+I borrowed a lot of ideas from the __[Deep Learning Specialization](https://www.coursera.org/specializations/deep-learning)__ I completed recently and I implemented the following architectures:
+
+- Logistic Regression
+
+- Shallow Neural Network
+
+- Deep Neural Network
+
+- Convolution Neural Network
+
+
+In this project, I started with implementing a simple hand crafted logistic regression model using Numpy. Later I implemented more sophisticated models using SKLearn and Keras/Tensorflow.
+
+- The Logistic Regression models and their results can be found here: __[Logistic Regression Model](https://github.com/manojmukkamala/VolcanoesOnVenus/blob/master/LogisticModel.ipynb)__
+
+
+- The Neural Net models along with CNN's and their results can be found here: __[Neural Network Model](https://github.com/manojmukkamala/VolcanoesOnVenus/blob/master/NeuralNetModel.ipynb)__
 
 ---
 

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -85,7 +84,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -234,6 +232,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -300,7 +299,7 @@ $(document).ready(function () {
 <ul>
 <li><p>In this project, I have analyzed the images of Volcanoes on Venus captured by NASA’s Magellan spacecraft in 1990.<br />
 </p></li>
-<li><p><strong><a href="dataanalysis.html">Data Analysis</a></strong> page explains the analysis I carried out on the input data.<br />
+<li><p><strong><a href="VenusDataCleansing.html">Data Preparation</a></strong> page explains the analysis and data cleansing I carried out on the input data.<br />
 </p></li>
 <li><p><strong><a href="https://github.com/manojmukkamala/VolcanoesOnVenus">Git Hub</a></strong> page has the code and other documents used for analysis.<br />
 </p></li>
@@ -315,6 +314,29 @@ $(document).ready(function () {
 </p></li>
 <li><p>In the analysis of the data captured by the spacecraft they found volcanoes on the surface on Venus, volcanoes that can be used to make a automatic machine that can detect them.<br />
 </p></li>
+</ul>
+<hr />
+</div>
+<div id="report" class="section level4">
+<h4>Report</h4>
+<p>The goal of this project is to experiment with and study the different types of neural network architechtures, from simple hand coded models to complex CNN’s using Tensorflow/Keras, in the process of identifying Volcanoes from a given surface image of Venus.</p>
+<p>Here are some fun facts about Venus:</p>
+<ul>
+<li><p>Venus does not have any Moons and so is single.</p></li>
+<li><p>Venus orbits the Sun every 224.7 Earth days while the rotation period is 243 Earth days. So, you are year old even before you are one day old on Venus.</p></li>
+</ul>
+<p><strong>Models</strong></p>
+<p>I borrowed a lot of ideas from the <strong><a href="https://www.coursera.org/specializations/deep-learning">Deep Learning Specialization</a></strong> I completed recently and I implemented the following architectures:</p>
+<ul>
+<li><p>Logistic Regression</p></li>
+<li><p>Shallow Neural Network</p></li>
+<li><p>Deep Neural Network</p></li>
+<li><p>Convolution Neural Network</p></li>
+</ul>
+<p>In this project, I started with implementing a simple hand crafted logistic regression model using Numpy. Later I implemented more sophisticated models using SKLearn and Keras/Tensorflow.</p>
+<ul>
+<li><p>The Logistic Regression models and their results can be found here: <strong><a href="https://github.com/manojmukkamala/VolcanoesOnVenus/blob/master/LogisticModel.ipynb">Logistic Regression Model</a></strong></p></li>
+<li><p>The Neural Net models along with CNN’s and their results can be found here: <strong><a href="https://github.com/manojmukkamala/VolcanoesOnVenus/blob/master/NeuralNetModel.ipynb">Neural Network Model</a></strong></p></li>
 </ul>
 <hr />
 </div>
